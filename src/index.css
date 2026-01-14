@@ -1,0 +1,47 @@
+/* src/index.css */
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Evita que el navegador cambie colores por "light dark" */
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #0b1220; /* tu fondo real */
+  color: #e9eefc;
+  overflow: hidden; /* el scroll lo maneja el main del Layout */
+}
+
+/* Si en algún lado existía max-width, lo anulamos */
+#root {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
