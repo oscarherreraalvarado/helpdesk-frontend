@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Tickets from "./pages/Tickets";
 import TicketDetail from "./pages/TicketDetail";
 import Layout from "./layout/Layout";
+import Register from "./pages/Register";
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const token = localStorage.getItem("token");
@@ -15,9 +16,11 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public */}
         <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
-        {/* Todo lo privado va dentro del Layout */}
+        {/* Private (con Layout) */}
         <Route
           element={
             <RequireAuth>

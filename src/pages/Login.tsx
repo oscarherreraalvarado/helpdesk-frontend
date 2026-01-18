@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { api } from "../api/axios";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+
 
 type LoginResponse = {
   token: string;
@@ -19,10 +21,12 @@ export default function Login() {
   const [password, setPassword] = useState("1234");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
     setLoading(true);
 
     try {
@@ -38,15 +42,31 @@ export default function Login() {
 
       navigate("/dashboard", { replace: true });
     } catch (err: any) {
-      const msg =
-        err?.response?.data?.error ||
-        err?.response?.data ||
-        "No se pudo iniciar sesión.";
-      setError(String(msg));
+      const status = err?.response?.status;
+
+      if (status === 400) setError("Completa Email y Password.");
+      else if (status === 401) setError("Credenciales inválidas.");
+      else if (status === 409) setError("Conflicto: ya existe ese usuario.");
+      else setError("Error del servidor. Intenta de nuevo.");
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const msg = localStorage.getItem("register_ok");
+    if (msg) {
+      setSuccess(msg);
+      localStorage.removeItem("register_ok");
+    }
+  }, []);
+
+  const ok = localStorage.getItem("register_ok");
+  if (ok) {
+    localStorage.removeItem("register_ok");
+    // puedes mostrarlo como error verde o alert; por ahora:
+    setError(ok);
+  }
 
   return (
     <div style={styles.page}>
@@ -79,13 +99,22 @@ export default function Login() {
             type="password"
             required
           />
-
+          {success && <div style={styles.success}>{success}</div>}
           {error && <div style={styles.error}>{error}</div>}
 
           <button style={styles.button} disabled={loading}>
             {loading ? "Ingresando..." : "Sign In"}
           </button>
         </form>
+        <div style={{ marginTop: 10, fontSize: 12, opacity: 0.85 }}>
+          ¿No tienes cuenta?{" "}
+          <span
+            style={{ color: "#60a5fa", cursor: "pointer", textDecoration: "underline" }}
+            onClick={() => navigate("/register")}
+          >
+            Crear usuario
+          </span>
+        </div>
 
         <div style={styles.footer}>
           Tip: usa el usuario que creaste en tu API.
@@ -159,4 +188,12 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: 13,
   },
   footer: { marginTop: 14, fontSize: 12, opacity: 0.7 },
+  success: {
+    background: "rgba(34,197,94,.15)",
+    border: "1px solid rgba(34,197,94,.35)",
+    color: "#bbf7d0",
+    padding: 10,
+    borderRadius: 10,
+    fontSize: 13,
+  },
 };
